@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Q41gNaNavarro</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: bisque;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+        }
+
+        .subcontainer {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: white;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            width: 80%;
+        }
+
+        .rating {
+            display: flex;
+            flex-direction: row-reverse;
+            justify-content: center;
+        }
+
+        .rating input {
+            display: none;
+        }
+
+        .rating label {
+            font-size: 40px;
+            color: #ccc;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .rating label:hover,
+        .rating label:hover ~ label {
+            color: gold;
+        }
+
+        .rating input:checked ~ label {
+            color: gold;
+        }
+
+        #movieList {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px;
+        justify-content: center;
+    }
+
+    .movie-card {
+        background: white;
+        padding: 15px;
+        width: 800px;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        text-align: center;
+        height: auto;
+    }
+    </style>
+</head>
+
+<body>
+
+    <!-- INPUT SECTION -->
+     <div class="container">
+    <div class="subcontainer">
+        <h1>Add a Movie</h1>
+
+        <label>Movie Title:</label>
+        <input type="text" id="movieTitle">
+
+        <br><br>
+
+        <label>Movie Year:</label>
+        <input type="text" id="movieYear">
+
+        <br><br>
+
+        <label>Movie Genre:</label>
+        <select id="movieGenre">
+            <option value="Action">Action</option>
+            <option value="Comedy">Comedy</option>
+            <option value="Drama">Drama</option>
+            <option value="Horror">Horror</option>
+            <option value="Sci-Fi">Sci-Fi</option>
+        </select>
+
+        <br><br>
+
+        <label>Movie Rating:</label>
+        <div class="rating">
+            <input type="radio" name="rating" id="star5" value="5">
+            <label for="star5">★</label>
+
+            <input type="radio" name="rating" id="star4" value="4">
+            <label for="star4">★</label>
+
+            <input type="radio" name="rating" id="star3" value="3">
+            <label for="star3">★</label>
+
+            <input type="radio" name="rating" id="star2" value="2">
+            <label for="star2">★</label>
+
+            <input type="radio" name="rating" id="star1" value="1">
+            <label for="star1">★</label>
+        </div>
+
+        <br>
+
+        <!-- IMPORTANT: type="button" -->
+        <button type="button" id="submitBtn">Submit</button>
+    </div>
+
+    <!-- OUTPUT SECTION -->
+    <div class="subcontainer">
+        <h2>Movie List</h2>
+        <ul id="movieList"></ul>
+    </div>
+    </div>
+
+</body>
+
+<script>
+    const movieList = document.getElementById("movieList");
+    const submitBtn = document.getElementById("submitBtn");
+
+    // Load saved movies if any
+    let movies = JSON.parse(localStorage.getItem("movies")) || [];
+    displayMovies();
+
+    submitBtn.addEventListener("click", () => {
+        const title = document.getElementById("movieTitle").value;
+        const year = document.getElementById("movieYear").value;
+        const genre = document.getElementById("movieGenre").value;
+
+        const ratingInput = document.querySelector('input[name="rating"]:checked');
+        const rating = ratingInput ? ratingInput.value : 0;
+
+        if (!title || !year) {
+            alert("Please fill in title and year");
+            return;
+        }
+
+        const movie = {
+            title,
+            year,
+            genre,
+            rating
+        };
+
+        movies.push(movie);
+
+        // Save to localStorage
+        localStorage.setItem("movies", JSON.stringify(movies));
+
+        displayMovies();
+        clearInputs();
+    });
+
+    function displayMovies() {
+        movieList.innerHTML = "";
+
+        movies.forEach(movie => {
+            const div = document.createElement("div");
+            div.classList.add("movie-card");
+
+            div.innerHTML = `
+                <h3>${movie.title}</h3> 
+                <p><strong>Year:</strong> ${movie.year}</p>
+                <p><strong>Genre:</strong> ${movie.genre}</p>
+                <p><strong>Rating:</strong> ${"★".repeat(movie.rating)}</p>
+            `;
+
+            movieList.appendChild(div);
+        });
+    }
+
+    function clearInputs() {
+        document.getElementById("movieTitle").value = "";
+        document.getElementById("movieYear").value = "";
+        document.getElementById("movieGenre").value = "Action";
+
+        document.querySelectorAll('input[name="rating"]').forEach(r => r.checked = false);
+    }
+</script>
+
+</html>
