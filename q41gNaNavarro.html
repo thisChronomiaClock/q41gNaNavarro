@@ -68,13 +68,27 @@
     .movie-card {
         background: white;
         padding: 15px;
-        width: 800px;
+        width: 200px;
         border-radius: 10px;
         box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-        text-align: center;
-        height: auto;
+        
     }
-    </style>
+
+    .delete-btn {
+    margin-top: 10px;
+    padding: 5px 10px;
+    border: none;
+    background-color: crimson;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+    }
+
+    .delete-btn:hover {
+        background-color: darkred;
+    }
+    
+</style>
 </head>
 
 <body>
@@ -178,27 +192,34 @@
     function displayMovies() {
         movieList.innerHTML = "";
 
-        movies.forEach(movie => {
+        movies.forEach((movie, index) => {
             const div = document.createElement("div");
             div.classList.add("movie-card");
 
             div.innerHTML = `
-                <h3>${movie.title}</h3> 
-                <p><strong>Year:</strong> ${movie.year}</p>
+                <h3>${movie.title}</h3> <p><strong>Year:</strong> ${movie.year}</p>
                 <p><strong>Genre:</strong> ${movie.genre}</p>
                 <p><strong>Rating:</strong> ${"★".repeat(movie.rating)}</p>
-            `;
+                <button class="delete-btn" onclick="deleteMovie(${index})">Delete</button>
+                `;
 
             movieList.appendChild(div);
         });
-    }
-
+        
+    }        
     function clearInputs() {
         document.getElementById("movieTitle").value = "";
         document.getElementById("movieYear").value = "";
         document.getElementById("movieGenre").value = "Action";
 
         document.querySelectorAll('input[name="rating"]').forEach(r => r.checked = false);
+    }
+
+    function deleteMovie(index) {
+    movies.splice(index, 1); // remove 1 movie
+
+    localStorage.setItem("movies", JSON.stringify(movies)); // update storage
+    displayMovies(); // refresh UI
     }
 </script>
 
